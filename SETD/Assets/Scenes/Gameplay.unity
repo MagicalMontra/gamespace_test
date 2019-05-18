@@ -251,14 +251,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 1255522735}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 72d16b1bc88df514d971c84536a8801c, type: 3}
+  m_Script: {fileID: 11500000, guid: 10c243a6b92bc4540a804a2d460c5e5c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  data:
-    name: 
-    maxHitPoints: 10
-    maxMana: 10
-    maxStamina: 100
 --- !u!1 &1441297134
 GameObject:
   m_ObjectHideFlags: 0
