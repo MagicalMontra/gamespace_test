@@ -5,12 +5,10 @@ using UnityEngine;
 [System.Serializable]
 public class Equipment : Item
 {
-    public Equipment(string name, string desc) : base(name, desc, 1)
+    public Equipment(ItemData data, int amount = 1) : base(data, amount)
     {
-        itemName = name;
-        itemDesc = desc;
-        isStackable = false;
-        IncreaseAmount(1);
+        this.data = data;
+        this.amount = IncreaseAmount(amount);
     }
 
     public override void Use()

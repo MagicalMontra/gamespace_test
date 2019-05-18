@@ -5,27 +5,21 @@ using UnityEngine;
 [System.Serializable]
 public class Item
 {
-    public string itemName;
-    public string itemDesc;
-    public bool isStackable;
-    private int amount { get; set; }
-    private int maxAmount { get; set; }
-
-    public Item(string name, string desc, int amount, bool canBeStacked = true)
+    public ItemData data;
+    protected int amount { get; set; }
+    public Item(ItemData data, int amount)
     {
-        itemName = name;
-        itemDesc = desc;
-        isStackable = canBeStacked;
+        this.data = data;
         this.amount = IncreaseAmount(amount);
     }
 
     protected virtual int IncreaseAmount(int inputAmount)
     {
-        if (!isStackable)
+        if (!data.isStackable)
             return 1;
 
-        if (inputAmount + amount >= maxAmount)
-            return maxAmount;
+        if (inputAmount + amount >= data.capacity)
+            return data.capacity;
 
         return inputAmount + amount;
     }
