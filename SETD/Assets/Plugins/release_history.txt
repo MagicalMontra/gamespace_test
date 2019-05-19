@@ -8,6 +8,22 @@ https://doc.photonengine.com
 http://forum.photonengine.com
 
 
+*** Version 4.1.2.14 (6. May 2019 - rev5088)
+    Changed: EventData now has Sender or CustomData properties as well as SenderKey and CustomDataKey. The keys can be defines according to API. The default are the Realtime API values. Sender and CustomData access is cached. If an EventData instance is reused (PhotonPeer.ReuseEventInstance), the values will reset.
+	
+*** Version 4.1.2.13 (3. May 2019 - rev5086)
+    Changed: EventData to not contain the Sender or CustomData properties anymore. They have been specific for the Realtime API and confusing for APIs like Chat. 
+    Added: PhotonPeer.ReuseEventInstance as option to use a single EventData instance for all incoming events. This reduces memory garbage. The drawback is: An event provided via OnEvent(EventData photonEvent) is invalidated right after the callback finished. That event's content will get modified. Typically this is not a problem as events are rarely cached.
+    Internal: Added caching for a EventData instance (on demand).
+Realtime / LoadBalancing
+    Changed: Renamed ClientState items which ended on "Gameserver" and "Masterserver" to using PascalCase "GameServer" and "MasterServer". The previous names are obsolete to ease upgrading this, if needed.
+    Updated: Checks if any given operation can be sent (to the currently connected server) or not. As not all operations are available on all server types, this may help avoid some mismatches.
+    Fixed: BroadcastPropsChangeToAll is applied correctly (it wasn't used properly, when false).
+    Fixed: When in offline mode, OpSetPropertiesOfActor does not get called (it failed due to not being connected).
+Chat
+    Fixed: properly add local client's UserId to public channels' Subscribers list when applicable.
+
+
 *** Version 4.1.2.12 (26. April 2019 - rev5046)
     Fixed: A problem with the new EventData code of v4.1.2.11. It optimistically assumed that events with codes below 200 were always just containing Sender and CustomData. Photon Chat uses different codes, however.
     Added: Access the Sender and CustomData via the EventData.Parameters dictionary, even if that is null (due to the new rules). In that case, the Sender and CustomData is accessed via the properties instead.
@@ -29,7 +45,6 @@ Chat:
     Added: Switch-related workaround. Setting a Thread.Name was causing a crash in some exports on console. This affects Unity to Nintendo Switch exports.
     Added: ChannelCreationOptions class to be used in the new Subscribe overload method.
     Changed: Chat to use the same 1.8 serialization as Realtime/PUN. This also now matches the SocketWebTcp.SerializationProtocol default.
-
 
 *** Version 4.1.2.10 (11. March 2019 - rev5023)
     Fixed: A timeout issue for WS / WSS transport protocols by sending a ping.
