@@ -1,9 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "ItemDataScriptable", menuName = "Item Data/Create Scriptable")]
-[System.Serializable]
+[Serializable]
 public class ItemDataScriptableMeta : ScriptableObject
 {
     public List<ItemData> items = new List<ItemData>();
