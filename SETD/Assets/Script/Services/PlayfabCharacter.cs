@@ -6,7 +6,7 @@ using PlayFab;
 using PlayFab.Json;
 using PlayFab.ClientModels;
 
-public class CharacterCreator : PlayfabService
+public class PlayfabCharacter : PlayfabService
 {
     void CreateCharacter(string newName, string newClass, string newRace)
     {

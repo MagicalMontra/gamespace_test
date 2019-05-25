@@ -6,8 +6,16 @@ using PlayFab;
 using PlayFab.ClientModels;
 using Zenject;
 
-public class LoginManager : PlayfabService
+public class PlayfabLogin : PlayfabService
 {
+    SignalBus _signalBus;
+
+    [Inject]
+    public void Constructor(SignalBus signalBus)
+    {
+        _signalBus = signalBus;
+    }
+
     #region API
 
     internal void Login(string username, string password)
@@ -51,6 +59,14 @@ public class LoginManager : PlayfabService
 #if UNITY_EDITOR
         Debug.Log(result.PlayFabId + " logged in.");
 #endif
+
+        _signalBus.TryFire(new LoginSignal(PlayFabClientAPI.IsClientLoggedIn(), result.PlayFabId));
+    }
+
+    internal override void OnError(PlayFabError error)
+    {
+        _signalBus.TryFire(new LoginSignal(false, error.GenerateErrorReport()));
+        // RegisterSignal
     }
 
     #endregion
