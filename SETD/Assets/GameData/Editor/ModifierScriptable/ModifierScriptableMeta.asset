@@ -13,7 +13,9 @@ MonoBehaviour:
   m_Name: ModifierScriptableMeta
   m_EditorClassIdentifier: 
   modifiers:
-  - {fileID: 11400000, guid: 59b0f81507d327c4d8e82f68bd3a2c35, type: 2}
+  - {fileID: 11400000, guid: 2cfb617ae6110c040914e256cb2e0b8b, type: 2}
+  - {fileID: 11400000, guid: d90f25e9bc9d4db47a23dd02e92fbb31, type: 2}
+  - {fileID: 11400000, guid: b60b6ef5250ed7e4196d2dc2eb8329bc, type: 2}
   - {fileID: 11400000, guid: 430c962cf0a99994fb3a6dcba6e48758, type: 2}
   - {fileID: 11400000, guid: ba0a2c9055e11f9488b198910617b7ef, type: 2}
-  - {fileID: 11400000, guid: 1504487d015a8dd41a8b0e7b16017f92, type: 2}
+  - {fileID: 11400000, guid: ef5266c3062336e4992aa151761d8c40, type: 2}

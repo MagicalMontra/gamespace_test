@@ -14,8 +14,6 @@ public class ModifierScriptableMetaEditor : Editor
     {
         Equipment = 0, Class, Race
     };
-
-    AbilityScriptable newAbility;
     ModifierScriptableMeta dataScriptable;
     Modifier newMod;
     TargetModifier targetModifer;
@@ -54,6 +52,21 @@ public class ModifierScriptableMetaEditor : Editor
             var datas = PlayfabContentUpload.SetupData(modifiers);
             PlayfabContentUpload.UploadGameData("ClassModifier", datas);
         }
+
+        if (GUILayout.Button("Upload Race Modifier"))
+        {
+            List<Modifier> modifiers = new List<Modifier>();
+            foreach (var scriptable in dataScriptable.modifiers)
+            {
+                if (scriptable.GetType() == typeof(RaceModifierScriptable))
+                    modifiers.Add(scriptable.modifier);
+            }
+
+            var datas = PlayfabContentUpload.SetupData(modifiers);
+            PlayfabContentUpload.UploadGameData("RaceModifier", datas);
+        }
+
+
 
         EditorGUI.EndDisabledGroup();
 
@@ -101,11 +114,8 @@ public class ModifierScriptableMetaEditor : Editor
         targetModifer = (TargetModifier)EditorGUILayout.EnumPopup(targetModifer);
         GUILayout.Label("Modifier Type");
         newMod.modType = (ModType)EditorGUILayout.EnumPopup(newMod.modType);
-        if (newMod.modType != ModType.Ability)
-        {
-            GUILayout.Label("Target Stat");
-            newMod.targetStat = (TargetStat)EditorGUILayout.EnumPopup(newMod.targetStat);
-        }
+        GUILayout.Label("Target Stat");
+        newMod.targetStat = (TargetStat)EditorGUILayout.EnumPopup(newMod.targetStat);
 
         bool isValid = true;
 
@@ -122,16 +132,6 @@ public class ModifierScriptableMetaEditor : Editor
                 newMod.modAmount = (float)EditorGUILayout.IntField((int)newMod.modAmount, GUILayout.Width(50));
                 desc = "Add " + newMod.modAmount.ToString() + " " + newMod.targetStat.ToString();
                 isValid = newMod.modAmount > 0;
-                break;
-            case ModType.Ability:
-                newAbility = (AbilityScriptable)EditorGUILayout.ObjectField(newAbility, typeof(AbilityScriptable), false);
-                isValid = newAbility != null;
-
-                if (isValid)
-                {
-                    newMod.ability = newAbility.ability;
-                }
-
                 break;
         }
 
@@ -160,6 +160,10 @@ public class ModifierScriptableMetaEditor : Editor
                     EditorUtility.SetDirty(classMod);
                     break;
                 case TargetModifier.Race:
+                    RaceModifierScriptable raceMod = ScriptableObjectUtility.CreateAsset<RaceModifierScriptable>(newMod.modName);
+                    raceMod.modifier = newMod;
+                    dataScriptable.AddMod(raceMod);
+                    EditorUtility.SetDirty(raceMod);
                     break;
             }
 
@@ -223,6 +227,11 @@ public class ModifierScriptableMetaEditor : Editor
             dataScriptable.modifiers = dataScriptable.modifiers.OrderBy(m => m is ModifierScriptable).ToList();
         }
 
+        if (GUILayout.Button("Race Modifier First"))
+        {
+            dataScriptable.modifiers = dataScriptable.modifiers.OrderByDescending(m => m is RaceModifierScriptable).ToList();
+        }
+
         // if (GUILayout.Button("Race Modifier First"))
         // {
         //     dataScriptable.modifiers = dataScriptable.modifiers.OrderBy(m => m is ModifierScriptable).ToList();
@@ -236,11 +245,6 @@ public class ModifierScriptableMetaEditor : Editor
         if (GUILayout.Button("Sort by ID"))
         {
             dataScriptable.modifiers = dataScriptable.modifiers.OrderBy(m => m.modifier.id).ToList();
-        }
-
-        if (GUILayout.Button("Sort by Amount"))
-        {
-            dataScriptable.modifiers = dataScriptable.modifiers.OrderByDescending(m => m.modifier.modAmount).ToList();
         }
 
         if (GUILayout.Button("Sort by Type"))

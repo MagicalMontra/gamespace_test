@@ -10,7 +10,6 @@ public class Modifier
     public int id;
     public string modDesc;
     public float modAmount;
-    public Ability ability;
     public TargetStat targetStat;
     public ModType modType;
 }
@@ -30,7 +29,7 @@ public static class CalculateMod
 [Serializable]
 public enum ModType
 {
-    Percentage, Add, Ability
+    Percentage, Add
 }
 
 [Serializable]

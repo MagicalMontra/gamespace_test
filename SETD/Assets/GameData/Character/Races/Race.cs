@@ -5,14 +5,8 @@ using UnityEngine;
 [System.Serializable]
 public class Race
 {
-    public string name { get; private set; }
-    public List<Modifier> modifiers { get; private set; }
-    public List<Ability> abilities { get; private set; }
-
-    public Race(string name, List<Modifier> modifiers, List<Ability> abilities)
-    {
-        this.name = name;
-        this.modifiers = modifiers;
-        this.abilities = abilities;
-    }
+    public string name;
+    public int id;
+    public List<Modifier> modifiers = new List<Modifier>();
+    public List<Ability> abilities = new List<Ability>();
 }

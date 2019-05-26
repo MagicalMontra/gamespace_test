@@ -10,20 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b7dd14e4696335b4eba5f29bd1e5f92e, type: 3}
-  m_Name: Fey Ascendancy
+  m_Name: Inner Rage
   m_EditorClassIdentifier: 
   modifier:
-    modName: Fey Ascendancy
+    modName: Inner Rage
     id: 0
-    modDesc: Increase Mana By 15%
-    modAmount: 0.15
-    ability:
-      abName: 
-      abDesc: 
-      cost: 0
-      abCooldown: 0
-      abTier:
-        tier: 0
-        tierDesc: 
-    targetStat: 1
+    modDesc: Increase AttackPoint By 50%
+    modAmount: 0.5
+    targetStat: 3
     modType: 0

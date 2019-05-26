@@ -9,21 +9,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b7dd14e4696335b4eba5f29bd1e5f92e, type: 3}
+  m_Script: {fileID: 11500000, guid: 3ef17c880a160ed40b7c08cb457a1264, type: 3}
   m_Name: Travelers
   m_EditorClassIdentifier: 
   modifier:
     modName: Travelers
-    id: 1
-    modDesc: Increase Stamina By 15%
-    modAmount: 0.15
-    ability:
-      abName: 
-      abDesc: 
-      cost: 0
-      abCooldown: 0
-      abTier:
-        tier: 0
-        tierDesc: 
+    id: 4
+    modDesc: Add 100 Stamina
+    modAmount: 100
     targetStat: 2
-    modType: 0
+    modType: 1

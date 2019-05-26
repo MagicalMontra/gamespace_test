@@ -12,9 +12,34 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9064cf2ddeedc4643b85dc222fe3db02, type: 3}
   m_Name: ClassDataScriptable
   m_EditorClassIdentifier: 
-  classes: []
-  tableVersion:
-    mainVersion: 0
-    subVersion: 0
-    balancedVersion: 0
-  targetTable: 
+  classes:
+  - name: Barbarian
+    id: 0
+    modifiers:
+    - modName: Inner Rage
+      id: 0
+      modDesc: Increase AttackPoint By 50%
+      modAmount: 0.5
+      targetStat: 3
+      modType: 0
+    abilities: []
+  - name: Mica
+    id: 1
+    modifiers:
+    - modName: Mica Power
+      id: 2
+      modDesc: Increase Mana By 5%
+      modAmount: 0.05
+      targetStat: 1
+      modType: 0
+    abilities: []
+  - name: Totem Master
+    id: 2
+    modifiers:
+    - modName: Primodal Incarnate
+      id: 1
+      modDesc: Add 200 HitPoint
+      modAmount: 200
+      targetStat: 0
+      modType: 1
+    abilities: []

@@ -29,7 +29,7 @@ namespace PlayfabServices.Admin
                 JsonObject attribute = new JsonObject();
                 foreach (var method in data.GetType().GetFields())
                 {
-                    if (method.Name != "modName")
+                    if (method.Name != "modName" && !string.IsNullOrEmpty(method.GetValue(data).ToString()))
                         attribute.Add(method.Name, method.GetValue(data).ToString());
                 }
 
@@ -39,11 +39,55 @@ namespace PlayfabServices.Admin
             return newdata;
         }
 
-        // public Dictionary<string, string> SetupData(List<ClassData> dataToUpload)
-        // {
-        //     Dictionary<string, string> keypairs = new Dictionary<string, string>();
-        //     data.Add
-        // }
+        public static JsonObject SetupData(List<ClassData> dataToUpload)
+        {
+            JsonObject newdata = new JsonObject();
+            foreach (var data in dataToUpload)
+            {
+                JsonObject attribute = new JsonObject();
+                foreach (var method in data.GetType().GetFields())
+                {
+                    if (method.Name == "id")
+                        attribute.Add(method.Name, method.GetValue(data).ToString());
+                }
+
+                JsonObject modifiers = new JsonObject();
+                foreach (var classMod in data.modifiers)
+                {
+                    modifiers.Add("modName", classMod.modName);
+                    modifiers.Add("id", classMod.id.ToString());
+                }
+                attribute.Add("Modifiers", modifiers);
+                newdata.Add(data.name, attribute);
+            }
+
+            return newdata;
+        }
+
+        public static JsonObject SetupData(List<Race> dataToUpload)
+        {
+            JsonObject newdata = new JsonObject();
+            foreach (var data in dataToUpload)
+            {
+                JsonObject attribute = new JsonObject();
+                foreach (var method in data.GetType().GetFields())
+                {
+                    if (method.Name == "id")
+                        attribute.Add(method.Name, method.GetValue(data).ToString());
+                }
+
+                JsonObject modifiers = new JsonObject();
+                foreach (var classMod in data.modifiers)
+                {
+                    modifiers.Add("modName", classMod.modName);
+                    modifiers.Add("id", classMod.id.ToString());
+                }
+                attribute.Add("Modifiers", modifiers);
+                newdata.Add(data.name, attribute);
+            }
+
+            return newdata;
+        }
 
         // public Dictionary<string, string> SetupData(List<Race> dataToUpload)
         // {

@@ -10,20 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b7dd14e4696335b4eba5f29bd1e5f92e, type: 3}
-  m_Name: Bloodlust
+  m_Name: Mica Power
   m_EditorClassIdentifier: 
   modifier:
-    modName: Bloodlust
+    modName: Mica Power
     id: 2
-    modDesc: Increase AttackPoint By 15%
-    modAmount: 0.15
-    ability:
-      abName: 
-      abDesc: 
-      cost: 0
-      abCooldown: 0
-      abTier:
-        tier: 0
-        tierDesc: 
-    targetStat: 3
+    modDesc: Increase Mana By 5%
+    modAmount: 0.05
+    targetStat: 1
     modType: 0

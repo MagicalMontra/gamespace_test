@@ -6,29 +6,29 @@ using UnityEditor;
 using PlayfabServices.Admin;
 
 
-[CustomEditor(typeof(ClassDataScriptableMeta))]
-public class ClassDataScriptableMetaEditor : Editor
+[CustomEditor(typeof(RaceScriptableMeta))]
+public class RaceScriptableMetaEditor : Editor
 {
     List<bool> foldout = new List<bool>();
-    List<ClassModifierScriptable> newModifiers = new List<ClassModifierScriptable>();
-    List<ClassAbilityScriptable> newAbilities = new List<ClassAbilityScriptable>();
-    ClassDataScriptableMeta dataScriptable;
-    ClassData newClass;
+    List<RaceModifierScriptable> newModifiers = new List<RaceModifierScriptable>();
+    List<RaceAbilityScriptable> newAbilities = new List<RaceAbilityScriptable>();
+    RaceScriptableMeta dataScriptable;
+    Race newRace;
 
     private void OnEnable()
     {
-        dataScriptable = (ClassDataScriptableMeta)target;
-        newClass = new ClassData();
+        dataScriptable = (RaceScriptableMeta)target;
+        newRace = new Race();
     }
 
     public override void OnInspectorGUI()
     {
         EditorGUILayout.Space();
 
-        if (!dataScriptable || dataScriptable.classes == null)
+        if (!dataScriptable || dataScriptable.races == null)
             return;
 
-        var dataCount = dataScriptable.classes.Count;
+        var dataCount = dataScriptable.races.Count;
         EditorGUILayout.Space();
 
         if (dataCount <= 0)
@@ -36,8 +36,8 @@ public class ClassDataScriptableMetaEditor : Editor
 
         if (GUILayout.Button("Upload to Playfab"))
         {
-            var data = PlayfabContentUpload.SetupData(dataScriptable.classes);
-            PlayfabContentUpload.UploadGameData("Classes", data);
+            var data = PlayfabContentUpload.SetupData(dataScriptable.races);
+            PlayfabContentUpload.UploadGameData("Races", data);
         }
 
         EditorGUI.EndDisabledGroup();
@@ -51,7 +51,7 @@ public class ClassDataScriptableMetaEditor : Editor
 
         EditorGUILayout.Space();
 
-        EditorGUILayout.LabelField("Total Class: ", dataCount.ToString());
+        EditorGUILayout.LabelField("Total Race: ", dataCount.ToString());
 
         EditorGUILayout.Space();
         DrawSortButtons();
@@ -69,13 +69,13 @@ public class ClassDataScriptableMetaEditor : Editor
 
         for (int i = 0; i < dataCount; i++)
         {
-            var job = dataScriptable.classes[i];
-            foldout[i] = EditorGUILayout.Foldout(foldout[i], job.name);
+            var race = dataScriptable.races[i];
+            foldout[i] = EditorGUILayout.Foldout(foldout[i], race.name);
 
             if (foldout[i])
             {
                 EditorGUI.indentLevel++;
-                DrawClassData(job);
+                DrawRaceData(race);
                 EditorGUI.indentLevel--;
             }
         }
@@ -86,16 +86,16 @@ public class ClassDataScriptableMetaEditor : Editor
     {
         EditorGUILayout.BeginHorizontal();
         EditorGUILayout.BeginVertical();
-        EditorGUILayout.LabelField("Create New Class", EditorStyles.boldLabel);
+        EditorGUILayout.LabelField("Create New Race", EditorStyles.boldLabel);
         EditorGUILayout.Space();
-        GUILayout.Label("Class Name");
-        newClass.name = EditorGUILayout.TextArea(newClass.name, GUILayout.Width(300));
-        newClass.id = dataScriptable.classes.Count;
+        GUILayout.Label("Race Name");
+        newRace.name = EditorGUILayout.TextArea(newRace.name, GUILayout.Width(300));
+        newRace.id = dataScriptable.races.Count;
 
-        GUILayout.Label("Class Modifiers");
+        GUILayout.Label("Race Modifiers");
         for (int i = 0; i < newModifiers.Count; i++)
         {
-            newModifiers[i] = (ClassModifierScriptable)EditorGUILayout.ObjectField(newModifiers[i], typeof(ClassModifierScriptable), false);
+            newModifiers[i] = (RaceModifierScriptable)EditorGUILayout.ObjectField(newModifiers[i], typeof(RaceModifierScriptable), false);
             if (GUILayout.Button("Remove Modifier"))
             {
                 newModifiers.RemoveAt(i);
@@ -108,10 +108,10 @@ public class ClassDataScriptableMetaEditor : Editor
         }
         EditorGUILayout.Space();
 
-        GUILayout.Label("Class Abilities");
+        GUILayout.Label("Race Abilities");
         for (int i = 0; i < newAbilities.Count; i++)
         {
-            newAbilities[i] = (ClassAbilityScriptable)EditorGUILayout.ObjectField(newAbilities[i], typeof(ClassAbilityScriptable), false);
+            newAbilities[i] = (RaceAbilityScriptable)EditorGUILayout.ObjectField(newAbilities[i], typeof(RaceAbilityScriptable), false);
             if (GUILayout.Button("Remove Ability"))
             {
                 newAbilities.RemoveAt(i);
@@ -124,7 +124,7 @@ public class ClassDataScriptableMetaEditor : Editor
         }
         EditorGUILayout.Space();
 
-        if (string.IsNullOrEmpty(newClass.name) || (newAbilities.Count > 0 && newAbilities.Exists(ability => ability == null))
+        if (string.IsNullOrEmpty(newRace.name) || (newAbilities.Count > 0 && newAbilities.Exists(ability => ability == null))
         || (newModifiers.Count > 0 && newModifiers.Exists(modifier => modifier == null)))
             EditorGUI.BeginDisabledGroup(true);
 
@@ -132,12 +132,12 @@ public class ClassDataScriptableMetaEditor : Editor
         {
             for (int i = 0; i < newModifiers.Count; i++)
             {
-                newClass.modifiers.Add(newModifiers[i].modifier);
+                newRace.modifiers.Add(newModifiers[i].modifier);
             }
 
-            dataScriptable.AddClass(newClass);
+            dataScriptable.AddRace(newRace);
             EditorUtility.SetDirty(dataScriptable);
-            newClass = new ClassData();
+            newRace = new Race();
         }
         EditorGUI.EndDisabledGroup();
         EditorGUILayout.EndVertical();
@@ -153,28 +153,28 @@ public class ClassDataScriptableMetaEditor : Editor
             {
                 if (GUILayout.Button("Sort by Class ID"))
                 {
-                    dataScriptable.classes = dataScriptable.classes.OrderBy(method.GetValue).ToList();
+                    dataScriptable.races = dataScriptable.races.OrderBy(method.GetValue).ToList();
                 }
             }
             else if (method.Name == "name")
             {
                 if (GUILayout.Button("Sort by Name"))
                 {
-                    dataScriptable.classes = dataScriptable.classes.OrderBy(method.GetValue).ToList();
+                    dataScriptable.races = dataScriptable.races.OrderBy(method.GetValue).ToList();
                 }
             }
             else if (method.Name == "modifiers")
             {
                 if (GUILayout.Button("Sort by Modifier Amount"))
                 {
-                    dataScriptable.classes = dataScriptable.classes.OrderByDescending(method.GetValue).ToList();
+                    dataScriptable.races = dataScriptable.races.OrderByDescending(method.GetValue).ToList();
                 }
             }
             else if (method.Name == "abilities")
             {
                 if (GUILayout.Button("Sort by Ability Amount"))
                 {
-                    dataScriptable.classes = dataScriptable.classes.OrderByDescending(method.GetValue).ToList();
+                    dataScriptable.races = dataScriptable.races.OrderByDescending(method.GetValue).ToList();
                 }
             }
         }
@@ -182,33 +182,33 @@ public class ClassDataScriptableMetaEditor : Editor
         EditorGUILayout.EndHorizontal();
     }
 
-    private void DrawClassData(ClassData job)
+    private void DrawRaceData(Race race)
     {
         EditorGUILayout.BeginVertical("Box");
 
         EditorGUILayout.Space();
 
-        var modifierScriptable = Resources.FindObjectsOfTypeAll<ClassModifierScriptable>().ToList();
+        var modifierScriptable = Resources.FindObjectsOfTypeAll<RaceModifierScriptable>().ToList();
 
-        foreach (var method in job.GetType().GetFields())
+        foreach (var method in race.GetType().GetFields())
         {
             if (method.Name == "id")
             {
-                EditorGUILayout.LabelField(method.Name, method.GetValue(job).ToString());
+                EditorGUILayout.LabelField(method.Name, method.GetValue(race).ToString());
             }
             else if (method.Name == "name")
             {
                 EditorGUILayout.LabelField("Class Name", EditorStyles.boldLabel);
-                job.name = EditorGUILayout.TextField(job.name, GUILayout.Width(300));
+                race.name = EditorGUILayout.TextField(race.name, GUILayout.Width(300));
             }
             else if (method.Name == "modifiers")
             {
-                for (int i = 0; i < job.modifiers.Count; i++)
+                for (int i = 0; i < race.modifiers.Count; i++)
                 {
-                    var scriptable = modifierScriptable.Find(m => m.modifier.modName == job.modifiers[i].modName);
+                    var scriptable = modifierScriptable.Find(m => m.modifier.modName == race.modifiers[i].modName);
                     var modifier = scriptable.modifier;
                     EditorGUILayout.LabelField("Mod #" + i + " " + modifier.modName, EditorStyles.boldLabel);
-                    EditorGUILayout.ObjectField(scriptable, typeof(ClassModifierScriptable), false);
+                    EditorGUILayout.ObjectField(scriptable, typeof(RaceModifierScriptable), false);
                     EditorGUILayout.LabelField("Target Stat");
                     modifier.targetStat = (TargetStat)EditorGUILayout.EnumPopup(modifier.targetStat);
                     EditorGUILayout.LabelField("Mod Type: " + modifier.modType.ToString());
@@ -229,14 +229,14 @@ public class ClassDataScriptableMetaEditor : Editor
             }
             else if (method.Name == "abilities")
             {
-                EditorGUILayout.LabelField("Ability Amount", job.abilities.Count.ToString());
+                EditorGUILayout.LabelField("Ability Amount", race.abilities.Count.ToString());
             }
             EditorGUILayout.Space();
         }
 
         if (GUILayout.Button("Delete"))
         {
-            dataScriptable.DeleteClass(job);
+            dataScriptable.RemoveRace(race);
             EditorUtility.SetDirty(dataScriptable);
         }
 
