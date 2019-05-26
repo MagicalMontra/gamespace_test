@@ -4,13 +4,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-
+#if UNITY_EDITOR
 [CustomEditor(typeof(ItemDataScriptableMeta))]
 public class ItemDataScriptableMetaEditor : Editor
 {
     List<bool> foldout = new List<bool>();
     ItemDataScriptableMeta dataScriptable;
     ItemData newItem;
+    PlayfabUploadCatalog uploadService = new PlayfabUploadCatalog();
 
     private void OnEnable()
     {
@@ -26,9 +27,11 @@ public class ItemDataScriptableMetaEditor : Editor
             return;
 
         var dataCount = dataScriptable.items.Count;
+        var catalogName = dataScriptable.targetTable + " " + dataScriptable.tableVersion.GetVersion();
 
         EditorGUILayout.LabelField("Catalogs Version", EditorStyles.boldLabel);
-        EditorGUILayout.LabelField(dataScriptable.tableVersion.GetVersion(), EditorStyles.boldLabel);
+        dataScriptable.targetTable = EditorGUILayout.TextField(dataScriptable.targetTable);
+        EditorGUILayout.LabelField(catalogName, EditorStyles.boldLabel);
         EditorGUILayout.Space();
 
         if (dataCount <= 0)
@@ -37,6 +40,8 @@ public class ItemDataScriptableMetaEditor : Editor
         if (GUILayout.Button("Upload to Playfab"))
         {
             dataScriptable.tableVersion.subVersion++;
+            var catalog = uploadService.SetupCatalogJson(dataScriptable.items);
+            uploadService.UploadCatalog(catalogName, catalog);
         }
 
         EditorGUI.EndDisabledGroup();
@@ -189,3 +194,4 @@ public class ItemDataScriptableMetaEditor : Editor
         // Playfab calling here.
     }
 }
+#endif

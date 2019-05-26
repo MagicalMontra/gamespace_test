@@ -29,8 +29,14 @@ MonoBehaviour:
     isStackable: 1
     capacity: 5
     price: 250
+  - id: 2
+    itemName: Scroll of Wisdom
+    itemDesc: '[Change player race and class randomly]'
+    isStackable: 0
+    capacity: 1
+    price: 9999
   tableVersion:
     mainVersion: 0
-    subVersion: 0
+    subVersion: 1
     balancedVersion: 0
-  targetTable: 
+  targetTable: ItemData
