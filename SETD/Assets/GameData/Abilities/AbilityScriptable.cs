@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [Serializable]
-public class ClassModifierScriptable : ModifierScriptable
+public class AbilityScriptable : ScriptableObject
 {
+    public Ability ability;
 }

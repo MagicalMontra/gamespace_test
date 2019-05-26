@@ -6,13 +6,13 @@ using UnityEngine;
 public class Race
 {
     public string name { get; private set; }
-    public RaceModifier modifier { get; private set; }
+    public List<Modifier> modifiers { get; private set; }
     public List<Ability> abilities { get; private set; }
 
-    public Race(string name, RaceModifier modifier, List<Ability> abilities)
+    public Race(string name, List<Modifier> modifiers, List<Ability> abilities)
     {
         this.name = name;
-        this.modifier = modifier;
+        this.modifiers = modifiers;
         this.abilities = abilities;
     }
 }

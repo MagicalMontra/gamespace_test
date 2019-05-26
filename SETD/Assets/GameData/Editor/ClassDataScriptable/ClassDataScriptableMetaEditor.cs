@@ -29,9 +29,6 @@ public class ClassDataScriptableMetaEditor : Editor
             return;
 
         var dataCount = dataScriptable.classes.Count;
-
-        EditorGUILayout.LabelField("Catalogs Version", EditorStyles.boldLabel);
-        EditorGUILayout.LabelField(dataScriptable.tableVersion.GetVersion(), EditorStyles.boldLabel);
         EditorGUILayout.Space();
 
         if (dataCount <= 0)
@@ -39,7 +36,7 @@ public class ClassDataScriptableMetaEditor : Editor
 
         if (GUILayout.Button("Upload to Playfab"))
         {
-            dataScriptable.tableVersion.subVersion++;
+
         }
 
         EditorGUI.EndDisabledGroup();

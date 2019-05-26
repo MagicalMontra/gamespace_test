@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7dd14e4696335b4eba5f29bd1e5f92e, type: 3}
+  m_Name: Bloodlust
+  m_EditorClassIdentifier: 
+  modifier:
+    modName: Bloodlust
+    id: 2
+    modDesc: Increase AttackPoint By 15%
+    modAmount: 0.15
+    ability:
+      abName: 
+      abDesc: 
+      cost: 0
+      abCooldown: 0
+      abTier:
+        tier: 0
+        tierDesc: 
+    targetStat: 3
+    modType: 0

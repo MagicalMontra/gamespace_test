@@ -7,7 +7,7 @@ public class ClassData
 {
     public string name;
     public int id;
-    public List<ClassModifier> modifiers = new List<ClassModifier>();
+    public List<Modifier> modifiers = new List<Modifier>();
     public List<Ability> abilities = new List<Ability>();
 
     public ClassData()
@@ -15,7 +15,7 @@ public class ClassData
 
     }
 
-    public ClassData(int id, string name, List<ClassModifier> modifiers, List<Ability> abilities)
+    public ClassData(int id, string name, List<Modifier> modifiers, List<Ability> abilities)
     {
         this.id = id;
         this.name = name;

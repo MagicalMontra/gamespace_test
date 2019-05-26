@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using PlayfabServices.User;
 using UnityEngine;
 using Zenject;
+
 
 public class LoginController : MonoBehaviour
 {

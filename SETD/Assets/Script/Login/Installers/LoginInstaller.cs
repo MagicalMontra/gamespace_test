@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using Zenject;
 using TMPro;
 using System;
+using PlayfabServices.User;
 
 public class LoginInstaller : MonoInstaller<LoginInstaller>
 {

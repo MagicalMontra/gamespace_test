@@ -8,8 +8,6 @@ using UnityEngine;
 public class ClassDataScriptableMeta : ScriptableObject
 {
     public List<ClassData> classes = new List<ClassData>();
-    public Version tableVersion;
-    public string targetTable;
 
     public void AddClass(ClassData classToCreate)
     {
