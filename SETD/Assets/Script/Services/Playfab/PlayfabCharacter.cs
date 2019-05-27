@@ -23,19 +23,27 @@ namespace PlayfabServices.User
             }, OnCharacterInitialized, error => OnError(error, errorSignal));
         }
 
-        public static void GetLiveRace()
+        public static void GetServerTitleData<T>(string key, Action<List<T>> signal, Action<PlayFabError> errorSignal)
         {
             var request = new GetTitleDataRequest()
             {
-                Keys = new List<string>() { "Race" }
+                Keys = new List<string>() { key }
             };
 
-            PlayFabClientAPI.GetTitleData(request, result =>
-            {
-                string value = "";
-                result.Data.TryGetValue("Race", out value);
-                List<Race> races = JsonConvert.DeserializeObject<List<Race>>(value);
-            }, null);
+            PlayFabClientAPI.GetTitleData(request, result => OnGetTitleData<T>(key, result, signal), error => OnError(error, errorSignal));
+        }
+
+        static void OnGetTitleData<T>(string key, GetTitleDataResult result, Action<List<T>> signal)
+        {
+            string json = "";
+            result.Data.TryGetValue(key, out json);
+            SendData<T>(json, signal);
+        }
+
+        static void SendData<T>(string json, Action<List<T>> signal)
+        {
+            List<T> list = JsonConvert.DeserializeObject<List<T>>(json);
+            signal(list);
         }
 
         static void InitializeCharacterBaseData(string characterId, string newClass, string newRace, Action<PlayFabError> errorSignal)
