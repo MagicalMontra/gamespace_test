@@ -9,7 +9,7 @@ namespace PlayfabServices.Admin
 {
 
 #if UNITY_EDITOR
-    public class PlayfabUploadCatalog : PlayfabService
+    public class PlayfabUploadCatalog
     {
         public void UploadCatalog(string targetCatalog, List<CatalogItem> catalogToUpload)
         {
@@ -19,7 +19,7 @@ namespace PlayfabServices.Admin
                 CatalogVersion = targetCatalog,
             };
 
-            PlayFabAdminAPI.SetCatalogItems(updateCatalogRequest, reuslt => Debug.Log("Upload Complete"), OnError);
+            PlayFabAdminAPI.SetCatalogItems(updateCatalogRequest, reuslt => Debug.Log("Upload Complete"), null);
 
             // PlayFabClientAPI.ExecuteCloudScript(new ExecuteCloudScriptRequest()
             // {

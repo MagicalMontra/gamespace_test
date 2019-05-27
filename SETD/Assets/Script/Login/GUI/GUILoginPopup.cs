@@ -25,10 +25,10 @@ public class GUILoginPopup : MonoBehaviour
     {
         _settings = settings;
         _signalBus = signalBus;
-        _settings.okayButton.onClick.AddListener(() => PopupSetActive(false));
+        _settings.okayButton.onClick.AddListener(() => gameObject.SetActive(false));
     }
 
-    public void Pop(LoginSignal signal)
+    public void SignalReceiver(LoginSignal signal)
     {
         if (signal._isLoggedin)
         {
@@ -36,13 +36,25 @@ public class GUILoginPopup : MonoBehaviour
             return;
         }
 
-        _settings.header.text = "Login Error";
-        _settings.content.text = signal.GetContent();
+        PopContent("Login Error", signal.GetContent());
         gameObject.SetActive(true);
     }
 
-    public void PopupSetActive(bool enabled)
+    public void SignalReceiver(RegisterSignal signal)
     {
-        gameObject.SetActive(enabled);
+        if (signal._isValid)
+        {
+            _signalBus.Fire(new CharacterSelectSignal());
+            return;
+        }
+
+        PopContent("Register Error", signal.GetContent());
+    }
+
+    void PopContent(string header, string content)
+    {
+        _settings.header.text = header;
+        _settings.content.text = content;
+        gameObject.SetActive(true);
     }
 }

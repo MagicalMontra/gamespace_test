@@ -37,7 +37,7 @@ public class RaceScriptableMetaEditor : Editor
         if (GUILayout.Button("Upload to Playfab"))
         {
             var data = PlayfabContentUpload.SetupData(dataScriptable.races);
-            PlayfabContentUpload.UploadGameData("Races", data);
+            PlayfabContentUpload.UploadGameData("Race", data);
         }
 
         EditorGUI.EndDisabledGroup();

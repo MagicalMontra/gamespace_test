@@ -10,5 +10,6 @@ public class CharacterSelectionInstaller : MonoInstaller<CharacterSelectionInsta
     public override void InstallBindings()
     {
         Container.Bind<GUICharacterSelection.Settings>().FromInstance(_settings);
+        Container.Bind<CharacterServiceController>().FromComponentInHierarchy().AsSingle();
     }
 }

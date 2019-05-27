@@ -8,19 +8,11 @@ using Zenject;
 
 namespace PlayfabServices.User
 {
-    public class PlayfabLogin : PlayfabService
+    public static class PlayfabLogin
     {
-        SignalBus _signalBus;
-
-        [Inject]
-        public void Constructor(SignalBus signalBus)
-        {
-            _signalBus = signalBus;
-        }
-
         #region API
 
-        internal void Login(string username, string password)
+        public static void Login(string username, string password, Action<LoginResult> signal, Action<PlayFabError> errorSignal)
         {
             var loginRequest = new LoginWithPlayFabRequest
             {
@@ -28,9 +20,9 @@ namespace PlayfabServices.User
                 Password = password
             };
 
-            PlayFabClientAPI.LoginWithPlayFab(loginRequest, OnLoginComplete, OnError);
+            PlayFabClientAPI.LoginWithPlayFab(loginRequest, result => OnLoginComplete(result, signal), error => OnError(error, errorSignal));
         }
-        internal void Register(string username, string password)
+        public static void Register(string username, string password, Action<RegisterPlayFabUserResult> signal, Action<PlayFabError> errorSignal)
         {
             var registerRequest = new RegisterPlayFabUserRequest
             {
@@ -40,35 +32,35 @@ namespace PlayfabServices.User
                 RequireBothUsernameAndEmail = false,
             };
 
-            PlayFabClientAPI.RegisterPlayFabUser(registerRequest, OnRegisterComplete, OnError);
+            PlayFabClientAPI.RegisterPlayFabUser(registerRequest, result => OnRegisterComplete(result, signal), error => OnError(error, errorSignal));
         }
 
         #endregion
 
         #region OnResponse
 
-        void OnRegisterComplete(RegisterPlayFabUserResult result)
+        static void OnRegisterComplete(RegisterPlayFabUserResult result, Action<RegisterPlayFabUserResult> signal)
         {
             // Signal UI Changes here
 #if UNITY_EDITOR
             Debug.Log(result.PlayFabId + " account has been created.");
 #endif
+            signal(result);
         }
 
-        void OnLoginComplete(LoginResult result)
+        static void OnLoginComplete(LoginResult result, Action<LoginResult> signal)
         {
             // Signal UI Changes here
 #if UNITY_EDITOR
             Debug.Log(result.PlayFabId + " logged in.");
 #endif
 
-            _signalBus.TryFire(new LoginSignal(PlayFabClientAPI.IsClientLoggedIn(), result.PlayFabId));
+            signal(result);
         }
 
-        internal override void OnError(PlayFabError error)
+        static void OnError(PlayFabError error, Action<PlayFabError> signal)
         {
-            _signalBus.TryFire(new LoginSignal(false, error.GenerateErrorReport()));
-            // RegisterSignal
+            signal(error);
         }
 
         #endregion

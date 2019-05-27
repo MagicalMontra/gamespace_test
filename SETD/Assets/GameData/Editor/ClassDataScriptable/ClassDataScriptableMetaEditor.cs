@@ -37,7 +37,7 @@ public class ClassDataScriptableMetaEditor : Editor
         if (GUILayout.Button("Upload to Playfab"))
         {
             var data = PlayfabContentUpload.SetupData(dataScriptable.classes);
-            PlayfabContentUpload.UploadGameData("Classes", data);
+            PlayfabContentUpload.UploadGameData("Class", data);
         }
 
         EditorGUI.EndDisabledGroup();

@@ -4,95 +4,46 @@ using UnityEngine;
 using PlayFab;
 using PlayFab.Json;
 using PlayFab.AdminModels;
+using Newtonsoft.Json;
 
 namespace PlayfabServices.Admin
 {
 #if UNITY_EDITOR
     public class PlayfabContentUpload
     {
-        public static void UploadGameData(string key, JsonObject data)
+        public static void UploadGameData(string key, string data)
         {
             var setTitleRequest = new SetTitleDataRequest
             {
                 Key = key,
-                Value = data.ToString()
+                Value = data
             };
 
             PlayFabAdminAPI.SetTitleData(setTitleRequest, result => Debug.Log("Upload Complete"), OnError);
         }
 
-        public static JsonObject SetupData(List<Modifier> dataToUpload)
-        {
-            JsonObject newdata = new JsonObject();
-            foreach (var data in dataToUpload)
-            {
-                JsonObject attribute = new JsonObject();
-                foreach (var method in data.GetType().GetFields())
-                {
-                    if (method.Name != "modName" && !string.IsNullOrEmpty(method.GetValue(data).ToString()))
-                        attribute.Add(method.Name, method.GetValue(data).ToString());
-                }
-
-                newdata.Add(data.modName, attribute);
-            }
-
-            return newdata;
-        }
-
-        public static JsonObject SetupData(List<ClassData> dataToUpload)
-        {
-            JsonObject newdata = new JsonObject();
-            foreach (var data in dataToUpload)
-            {
-                JsonObject attribute = new JsonObject();
-                foreach (var method in data.GetType().GetFields())
-                {
-                    if (method.Name == "id")
-                        attribute.Add(method.Name, method.GetValue(data).ToString());
-                }
-
-                JsonObject modifiers = new JsonObject();
-                foreach (var classMod in data.modifiers)
-                {
-                    modifiers.Add("modName", classMod.modName);
-                    modifiers.Add("id", classMod.id.ToString());
-                }
-                attribute.Add("Modifiers", modifiers);
-                newdata.Add(data.name, attribute);
-            }
-
-            return newdata;
-        }
-
-        public static JsonObject SetupData(List<Race> dataToUpload)
-        {
-            JsonObject newdata = new JsonObject();
-            foreach (var data in dataToUpload)
-            {
-                JsonObject attribute = new JsonObject();
-                foreach (var method in data.GetType().GetFields())
-                {
-                    if (method.Name == "id")
-                        attribute.Add(method.Name, method.GetValue(data).ToString());
-                }
-
-                JsonObject modifiers = new JsonObject();
-                foreach (var classMod in data.modifiers)
-                {
-                    modifiers.Add("modName", classMod.modName);
-                    modifiers.Add("id", classMod.id.ToString());
-                }
-                attribute.Add("Modifiers", modifiers);
-                newdata.Add(data.name, attribute);
-            }
-
-            return newdata;
-        }
-
-        // public Dictionary<string, string> SetupData(List<Race> dataToUpload)
+        // public static JsonObject SetupData(List<Modifier> dataToUpload)
         // {
-        //     Dictionary<string, string> keypairs = new Dictionary<string, string>();
+        //     JsonObject modifiers = new JsonObject();
+        //     foreach (var data in dataToUpload)
+        //     {
+        //         JsonObject mod = new JsonObject();
+        //         foreach (var method in data.GetType().GetFields())
+        //         {
+        //             mod.Add(method.Name, method.GetValue(data).ToString());
+        //         }
+        //         modifiers.Add("modifier", mod);
+        //     }
+
+        //     return modifiers;
         // }
+
+        public static string SetupData<T>(List<T> dataToUpload)
+        {
+            string json = JsonConvert.SerializeObject(dataToUpload);
+
+            return json;
+        }
 
         public static void OnError(PlayFabError error)
         {

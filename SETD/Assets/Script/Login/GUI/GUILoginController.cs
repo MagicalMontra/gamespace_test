@@ -29,12 +29,16 @@ public class GUILoginController : MonoBehaviour
     void Start()
     {
         _settings.loginPanel.GetSettings().loginButton.onClick.AddListener(OnLoginButtonClicked);
-        _settings.loginPanel.GetSettings().registerButton.onClick.AddListener(OnLoginButtonClicked);
+        _settings.loginPanel.GetSettings().registerButton.onClick.AddListener(OnRegisterButtonClicked);
     }
 
     public void OnLoginSignalFired(LoginSignal signal)
     {
-        _settings.popup.Pop(signal);
+        _settings.popup.SignalReceiver(signal);
+    }
+    public void OnRegisterSignalFired(RegisterSignal signal)
+    {
+        _settings.popup.SignalReceiver(signal);
     }
 
     public void OnLoginButtonClicked()
