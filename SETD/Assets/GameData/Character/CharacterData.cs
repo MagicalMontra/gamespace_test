@@ -1,68 +1,52 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[System.Serializable]
+[Serializable]
 public class CharacterData
 {
-    public Race race;
-    public ClassData classData;
-    public List<Modifier> modifiers;
-    public string name;
-    public int maxHitPoints = 10;
-    public int maxMana = 10;
-    public int maxStamina = 100;
+    public List<Modifier> modifiers = new List<Modifier>();
+    public Race race { get; private set; }
+    public ClassData classData { get; private set; }
+    public string name { get; private set; }
+    public int maxHitPoints { get; private set; }
+    public int maxMana { get; private set; }
+    public int maxStamina { get; private set; }
 
-    float _hp;
-    float _mp = 0;
-    float _sp;
-
-    public float HitPoints
-    {
-        get
-        {
-            return _hp;
-        }
-        set
-        {
-            _hp = ResourceChange(_hp, value, maxHitPoints);
-        }
-    }
-
-    public float ManaPoints
-    {
-        get
-        {
-            return _mp;
-        }
-        set
-        {
-            _mp = ResourceChange(_mp, value, maxMana);
-        }
-    }
-
-    public float StaminaPoints
-    {
-        get
-        {
-            return _sp;
-        }
-        set
-        {
-            _sp = ResourceChange(_sp, value, maxStamina);
-        }
-    }
+    public float hitPoints { get; private set; }
+    public float manaPoints { get; private set; }
+    public float staminaPoints { get; private set; }
 
     public void InitResources()
     {
-        _hp = maxHitPoints;
+        hitPoints = maxHitPoints;
 
         // Some character may not have mana
         if (maxMana > 0)
-            _mp = maxMana;
+            manaPoints = maxMana;
 
-        _sp = maxStamina;
+        staminaPoints = maxStamina;
     }
+
+    public float HitPointsChange(float changeAmount)
+    {
+        var calculatedValue = ResourceChange(hitPoints, changeAmount, maxHitPoints);
+        return hitPoints = calculatedValue;
+    }
+
+    public float ManaPointsChange(float changeAmount)
+    {
+        var calculatedValue = ResourceChange(manaPoints, changeAmount, maxMana);
+        return manaPoints = calculatedValue;
+    }
+
+    public float StaminaChange(float changeAmount)
+    {
+        var calculatedValue = ResourceChange(manaPoints, changeAmount, maxStamina);
+        return staminaPoints = calculatedValue;
+    }
+
     protected float ResourceChange(float targetResource, float changedAmount, int resourceLimits)
     {
         // return calculated amount

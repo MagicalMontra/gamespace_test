@@ -18,15 +18,11 @@ public class GUILoginPanel : MonoBehaviour
     }
 
     Settings _settings;
-    SignalBus _signalBus;
 
     [Inject]
-    public void Constructor(Settings settings, SignalBus signalBus)
+    public void Constructor(Settings settings)
     {
         _settings = settings;
-        _signalBus = signalBus;
-
-        SignalReceiver();
     }
 
     public Settings GetSettings()
@@ -34,15 +30,13 @@ public class GUILoginPanel : MonoBehaviour
         return _settings;
     }
 
-    void SignalReceiver()
-    {
-        // In case the same overload need other signal
-
-        _signalBus.Subscribe<CharacterSelectSignal>(Disabled);
-    }
-
-    void Disabled(CharacterSelectSignal signal)
+    public void OnCharacterSignalFired(CharacterSelectSignal signal)
     {
         gameObject.SetActive(false);
+    }
+
+    public void OnLogoutSignalFired(LogoutSignal signal)
+    {
+        gameObject.SetActive(true);
     }
 }

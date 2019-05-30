@@ -15,6 +15,7 @@ public class GUILoginController : MonoBehaviour
     {
         public GUILoginPanel loginPanel;
         public GUILoginPopup popup;
+        //public GUILoadingScreen loginLoading;
     }
     Settings _settings;
     LoginController _controller;
@@ -34,11 +35,20 @@ public class GUILoginController : MonoBehaviour
 
     public void OnLoginSignalFired(LoginSignal signal)
     {
-        _settings.popup.SignalReceiver(signal);
+        _settings.popup.OnLoginSignalFired(signal);
     }
     public void OnRegisterSignalFired(RegisterSignal signal)
     {
-        _settings.popup.SignalReceiver(signal);
+        _settings.popup.OnRegisterSignalFired(signal);
+    }
+    public void OnLogoutSignalFired(LogoutSignal signal)
+    {
+        _settings.loginPanel.OnLogoutSignalFired(signal);
+    }
+
+    public void OnErrorSignalFired(ErrorSignal signal)
+    {
+        _settings.popup.OnErrorSignalFire(signal);
     }
 
     public void OnLoginButtonClicked()

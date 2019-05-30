@@ -13,37 +13,74 @@ namespace PlayfabServices.User
 {
     public static class PlayfabCharacter
     {
+        public static void GetCharacterDatas(Action<List<CharacterData>> dataCallback, Action<PlayFabError> errorSignal)
+        {
+            var listCharactersRequest = new ListUsersCharactersRequest
+            {
+
+            };
+
+            PlayFabClientAPI.GetAllUsersCharacters(listCharactersRequest,
+            result => OnGetCharacterData(result, dataCallback),
+            error => OnError(error, errorSignal));
+        }
+
+        static void OnGetCharacterData(ListUsersCharactersResult result, Action<List<CharacterData>> dataCallback)
+        {
+            if (result.Characters.Count <= 0)
+            {
+                dataCallback(new List<CharacterData>());
+                return;
+            }
+
+        }
+
         public static void CreateCharacter(string newName, string newClass, string newRace, Action<PlayFabError> errorSignal)
         {
             PlayFabClientAPI.ExecuteCloudScript(new ExecuteCloudScriptRequest()
             {
                 FunctionName = "createCharacter",
-                FunctionParameter = new { characterName = newName },
+                FunctionParameter = new { characterName = newName, race = newRace, classData = newClass },
                 GeneratePlayStreamEvent = true
             }, OnCharacterInitialized, error => OnError(error, errorSignal));
         }
 
-        public static void GetServerTitleData<T>(string key, Action<List<T>> signal, Action<PlayFabError> errorSignal)
+        public static string SetupData<T>(T dataToUpload)
+        {
+            string json = JsonConvert.SerializeObject(dataToUpload);
+
+            return json;
+        }
+
+        public static void GetServerTitleData<T>(string key, Action<List<T>> dataCallback, Action<PlayFabError> errorSignal)
         {
             var request = new GetTitleDataRequest()
             {
                 Keys = new List<string>() { key }
             };
 
-            PlayFabClientAPI.GetTitleData(request, result => OnGetTitleData<T>(key, result, signal), error => OnError(error, errorSignal));
+            PlayFabClientAPI.GetTitleData(request, result => OnGetTitleData<T>(key, result, dataCallback, errorSignal), error => OnError(error, errorSignal));
         }
 
-        static void OnGetTitleData<T>(string key, GetTitleDataResult result, Action<List<T>> signal)
+        static void OnGetTitleData<T>(string key, GetTitleDataResult result, Action<List<T>> dataCallback, Action<PlayFabError> errorSignal)
         {
+            if (result.Data.Count <= 0)
+            {
+                var error = new PlayFabError();
+                error.ErrorMessage = "No Data Found";
+                OnError(error, errorSignal);
+                return;
+            }
+
             string json = "";
             result.Data.TryGetValue(key, out json);
-            SendData<T>(json, signal);
+            SendData<T>(json, dataCallback);
         }
 
-        static void SendData<T>(string json, Action<List<T>> signal)
+        static void SendData<T>(string json, Action<List<T>> dataCallback)
         {
             List<T> list = JsonConvert.DeserializeObject<List<T>>(json);
-            signal(list);
+            dataCallback(list);
         }
 
         static void InitializeCharacterBaseData(string characterId, string newClass, string newRace, Action<PlayFabError> errorSignal)
@@ -78,7 +115,11 @@ namespace PlayfabServices.User
 
         static void OnError(PlayFabError error, Action<PlayFabError> signal)
         {
+            signal(error);
 
+#if UNITY_EDITOR
+            Debug.Log(error.ErrorMessage);
+#endif
         }
     }
 

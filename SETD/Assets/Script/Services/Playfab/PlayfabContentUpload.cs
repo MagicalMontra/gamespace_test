@@ -22,22 +22,6 @@ namespace PlayfabServices.Admin
             PlayFabAdminAPI.SetTitleData(setTitleRequest, result => Debug.Log("Upload Complete"), OnError);
         }
 
-        // public static JsonObject SetupData(List<Modifier> dataToUpload)
-        // {
-        //     JsonObject modifiers = new JsonObject();
-        //     foreach (var data in dataToUpload)
-        //     {
-        //         JsonObject mod = new JsonObject();
-        //         foreach (var method in data.GetType().GetFields())
-        //         {
-        //             mod.Add(method.Name, method.GetValue(data).ToString());
-        //         }
-        //         modifiers.Add("modifier", mod);
-        //     }
-
-        //     return modifiers;
-        // }
-
         public static string SetupData<T>(List<T> dataToUpload)
         {
             string json = JsonConvert.SerializeObject(dataToUpload);

@@ -24,9 +24,15 @@ public class LoginInstaller : MonoInstaller<LoginInstaller>
         Container.DeclareSignal<RegisterSignal>();
         Container.DeclareSignal<CharacterSelectSignal>();
 
+        Container.DeclareSignal<LoadingSignal>();
+        Container.DeclareSignal<FinishLoading>();
+
         Container.BindSignal<LoginSignal>().ToMethod<GUILoginController>(c => c.OnLoginSignalFired).FromResolve();
+        Container.BindSignal<LogoutSignal>().ToMethod<GUILoginController>(c => c.OnLogoutSignalFired).FromResolve();
+        Container.BindSignal<LogoutSignal>().ToMethod<GUICharacterSelection>(c => c.OnLogoutSignalFired).FromResolve();
+        Container.BindSignal<ErrorSignal>().ToMethod<GUILoginController>(c => c.OnErrorSignalFired).FromResolve();
         Container.BindSignal<RegisterSignal>().ToMethod<GUILoginController>(c => c.OnRegisterSignalFired).FromResolve();
-        Container.BindSignal<CharacterSelectSignal>().ToMethod<GUICharacterSelection>(c => c.Enabled).FromResolve();
+        Container.BindSignal<CharacterSelectSignal>().ToMethod<GUICharacterSelection>(c => c.OnCharacterSelectSignalFired).FromResolve();
     }
 }
 

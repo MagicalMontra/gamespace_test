@@ -12,6 +12,9 @@ public class GUICharacterSelection : MonoBehaviour
     {
         public Button startButton;
         public Button logoutButton;
+        public Button[] createButtons;
+        public GUICharacterCreate createPanel;
+        public GUILoadingScreen dataLoading;
     }
     Settings _settings;
     CharacterServiceController _controller;
@@ -21,11 +24,37 @@ public class GUICharacterSelection : MonoBehaviour
     {
         _settings = settings;
         _controller = controller;
+
+        foreach (var button in _settings.createButtons)
+        {
+            button.onClick.AddListener(OnCreateButtonClicked);
+        }
     }
 
-    public void Enabled(CharacterSelectSignal signal)
+    void OnCreateButtonClicked()
+    {
+        _settings.createPanel.SetupRace(_controller.GetRaces());
+        _settings.createPanel.SetupClass(_controller.GetClasses());
+        _settings.createPanel.gameObject.SetActive(true);
+    }
+
+    public void OnCharacterSelectSignalFired(CharacterSelectSignal signal)
     {
         gameObject.SetActive(true);
-        _controller.GetRaces();
+    }
+
+    public void OnLogoutSignalFired(LogoutSignal signal)
+    {
+        gameObject.SetActive(false);
+    }
+
+    public void OnLoadingSignalFired(LoadingSignal signal)
+    {
+        _settings.dataLoading.StartLoading();
+    }
+
+    public void OnFinishLoadingSignalFired(FinishLoading signal)
+    {
+        _settings.dataLoading.EndLoading();
     }
 }

@@ -28,7 +28,7 @@ public class GUILoginPopup : MonoBehaviour
         _settings.okayButton.onClick.AddListener(() => gameObject.SetActive(false));
     }
 
-    public void SignalReceiver(LoginSignal signal)
+    public void OnLoginSignalFired(LoginSignal signal)
     {
         if (signal._isLoggedin)
         {
@@ -40,7 +40,7 @@ public class GUILoginPopup : MonoBehaviour
         gameObject.SetActive(true);
     }
 
-    public void SignalReceiver(RegisterSignal signal)
+    public void OnRegisterSignalFired(RegisterSignal signal)
     {
         if (signal._isValid)
         {
@@ -49,6 +49,11 @@ public class GUILoginPopup : MonoBehaviour
         }
 
         PopContent("Register Error", signal.GetContent());
+    }
+
+    public void OnErrorSignalFire(ErrorSignal signal)
+    {
+        PopContent("Error", signal._errorMessage);
     }
 
     void PopContent(string header, string content)
