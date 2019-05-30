@@ -20,21 +20,13 @@ public class GUICharacterSelection : MonoBehaviour
     CharacterServiceController _controller;
 
     [Inject]
-    public void Constructor(Settings settings, CharacterServiceController controller)
+    public void Constructor(Settings settings)
     {
         _settings = settings;
-        _controller = controller;
-
-        foreach (var button in _settings.createButtons)
-        {
-            button.onClick.AddListener(OnCreateButtonClicked);
-        }
     }
 
     void OnCreateButtonClicked()
     {
-        _settings.createPanel.SetupRace(_controller.GetRaces());
-        _settings.createPanel.SetupClass(_controller.GetClasses());
         _settings.createPanel.gameObject.SetActive(true);
     }
 
@@ -56,5 +48,19 @@ public class GUICharacterSelection : MonoBehaviour
     public void OnFinishLoadingSignalFired(FinishLoading signal)
     {
         _settings.dataLoading.EndLoading();
+
+        for (int i = 0; i < _settings.createButtons.Length; i++)
+        {
+            _settings.createButtons[i].onClick.AddListener(OnCreateButtonClicked);
+        }
+
+        _settings.createPanel.SetupRace();
+        _settings.createPanel.SetupClass();
+    }
+
+    IEnumerator DelayResolver()
+    {
+        yield return new WaitForSecondsRealtime(0.5f);
+
     }
 }

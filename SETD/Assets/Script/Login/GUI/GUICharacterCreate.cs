@@ -12,11 +12,14 @@ public class GUICharacterCreate : MonoBehaviour
     SignalBus _signalBus;
     List<GameObject> modTabs = new List<GameObject>();
 
-    public void Constructor(Settings settings, SignalBus signalBus)
+    CharacterServiceController _controller;
+
+    [Inject]
+    public void Constructor(Settings settings, SignalBus signalBus, CharacterServiceController controller)
     {
         _setting = settings;
         _signalBus = signalBus;
-
+        _controller = controller;
         AssignInputFunction();
     }
 
@@ -31,30 +34,28 @@ public class GUICharacterCreate : MonoBehaviour
         _setting.classInput.onValueChanged.AddListener(value => OnClassChanged());
     }
 
-    public void SetupRace(List<Race> races)
+    public void SetupRace()
     {
-        List<TMP_Dropdown.OptionData> options = new List<TMP_Dropdown.OptionData>();
+        var races = _controller.GetRaces();
+        List<string> options = new List<string>();
 
         for (int i = 0; i < races.Count; i++)
         {
-            TMP_Dropdown.OptionData data = new TMP_Dropdown.OptionData();
-            data.text = races[i].name;
-            options.Add(data);
+            options.Add(races[i].name);
         }
 
         _setting.raceInput.ClearOptions();
         _setting.raceInput.AddOptions(options);
     }
 
-    public void SetupClass(List<ClassData> classes)
+    public void SetupClass()
     {
-        List<TMP_Dropdown.OptionData> options = new List<TMP_Dropdown.OptionData>();
+        var classes = _controller.GetClasses();
+        List<string> options = new List<string>();
 
         for (int i = 0; i < classes.Count; i++)
         {
-            TMP_Dropdown.OptionData data = new TMP_Dropdown.OptionData();
-            data.text = classes[i].name;
-            options.Add(data);
+            options.Add(classes[i].name);
         }
 
         _setting.classInput.ClearOptions();
@@ -94,8 +95,8 @@ public class GUICharacterCreate : MonoBehaviour
     public class Settings
     {
         public TMP_InputField nameInput;
-        public TMP_Dropdown raceInput;
-        public TMP_Dropdown classInput;
+        public Dropdown raceInput;
+        public Dropdown classInput;
         public TextMeshProUGUI sumName;
         public TextMeshProUGUI sumRace;
         public TextMeshProUGUI sumClass;

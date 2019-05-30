@@ -1,4 +1,5 @@
-﻿using System;
+﻿using System.Linq;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -75,12 +76,14 @@ public class CharacterServiceController : MonoBehaviour
     void OnGetRace(List<Race> races)
     {
         _races = races;
+        _newCharacter.race = _races.FirstOrDefault();
         _dataFlag.succeedGetRace = true;
     }
 
     void OnGetClass(List<ClassData> classes)
     {
         _classes = classes;
+        _newCharacter.classData = _classes.FirstOrDefault();
         _dataFlag.succeedGetData = true;
     }
 
@@ -120,7 +123,7 @@ public class CharacterServiceController : MonoBehaviour
 
     public void OnCharacterDataSignalFired(CharacterDataChangedSignal signal)
     {
-        if (signal.targetData == TargetData.Class)
+        if (signal.targetData == TargetData.Race)
         {
             Race raceToCreate = _races.Find(race => race.id == Convert.ToInt32(signal.id));
             _newCharacter.race = raceToCreate;

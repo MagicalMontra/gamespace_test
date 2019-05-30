@@ -40,9 +40,9 @@ namespace PlayfabServices.User
             PlayFabClientAPI.ExecuteCloudScript(new ExecuteCloudScriptRequest()
             {
                 FunctionName = "createCharacter",
-                FunctionParameter = new { characterName = newName, race = newRace, classData = newClass },
+                FunctionParameter = new { characterName = newName },
                 GeneratePlayStreamEvent = true
-            }, OnCharacterInitialized, error => OnError(error, errorSignal));
+            }, result => OnCharacterInitialized(result, newRace, newClass), error => OnError(error, errorSignal));
         }
 
         public static string SetupData<T>(T dataToUpload)
@@ -83,11 +83,11 @@ namespace PlayfabServices.User
             dataCallback(list);
         }
 
-        static void InitializeCharacterBaseData(string characterId, string newClass, string newRace, Action<PlayFabError> errorSignal)
+        static void InitializeCharacterBaseData(string characterId, string newClass, string newRace)
         {
             var newCharacterData = new Dictionary<string, string>();
-            newCharacterData.Add("Class", newClass);
             newCharacterData.Add("Race", newRace);
+            newCharacterData.Add("ClassData", newClass);
 
             var initCharacterRequest = new UpdateCharacterDataRequest()
             {
@@ -95,7 +95,7 @@ namespace PlayfabServices.User
                 Data = newCharacterData,
                 Permission = UserDataPermission.Public
             };
-            PlayFabClientAPI.UpdateCharacterData(initCharacterRequest, OnCharacterCreated, error => OnError(error, errorSignal));
+            PlayFabClientAPI.UpdateCharacterData(initCharacterRequest, OnCharacterCreated, error => Debug.Log(error.ErrorMessage));
         }
 
         static void OnCharacterCreated(UpdateCharacterDataResult result)
@@ -103,14 +103,14 @@ namespace PlayfabServices.User
             // Signal UI Change
         }
 
-        static void OnCharacterInitialized(ExecuteCloudScriptResult result)
+        static void OnCharacterInitialized(ExecuteCloudScriptResult result, string race, string classData)
         {
             JsonObject jsonResult = (JsonObject)result.FunctionResult;
             object message = null;
             jsonResult.TryGetValue("CharacterId", out message);
             var characterResult = JsonUtility.FromJson<GrantCharacterToUserResult>(message.ToString());
 
-            // InitializeCharacterBaseData(characterResult.CharacterId, "", "");
+            InitializeCharacterBaseData(characterResult.CharacterId, classData, race);
         }
 
         static void OnError(PlayFabError error, Action<PlayFabError> signal)
