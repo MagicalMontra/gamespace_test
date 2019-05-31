@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using PlayFab;
 using PlayfabServices.User;
+using PlayFab.ClientModels;
 using Zenject;
 
 public class CharacterServiceController : MonoBehaviour
@@ -52,6 +53,11 @@ public class CharacterServiceController : MonoBehaviour
         return _classes;
     }
 
+    public void DeleteCharacter(string name, Action onDelete)
+    {
+        PlayfabCharacter.DeleteCharacter(name, onDelete, OnError);
+    }
+
     IEnumerator OnGotAllData()
     {
         yield return new WaitUntil(() => _dataFlag.IsAllTrue());
@@ -71,6 +77,7 @@ public class CharacterServiceController : MonoBehaviour
     void CallCharacters()
     {
         PlayfabCharacter.GetCharacterDatas(OnGetCharacter, OnError);
+        _signalBus.TryFire(new LoadingSignal("Pulling character list from server"));
     }
 
     void OnGetRace(List<Race> races)
@@ -87,19 +94,44 @@ public class CharacterServiceController : MonoBehaviour
         _dataFlag.succeedGetData = true;
     }
 
-    void OnGetCharacter(List<CharacterData> characters)
+    void OnGetCharacter(ListUsersCharactersResult result)
     {
-        _dataFlag.succeedGetCharacter = true;
-
-        if (characters.Count <= 0)
+        if (result.Characters.Count <= 0)
+        {
+            _dataFlag.succeedGetCharacter = true;
             return;
+        }
 
-        _characters = characters;
+        StartCoroutine(GetEachCharacterData(result));
+    }
+
+    IEnumerator GetEachCharacterData(ListUsersCharactersResult result)
+    {
+        _characters.Clear();
+
+        for (int i = 0; i < result.Characters.Count; i++)
+        {
+            PlayfabCharacter.GetCharacterDeepData(result.Characters[i].CharacterId,
+            result.Characters[i].CharacterName,
+            cResult => _characters.Add(cResult), OnError);
+        }
+
+        yield return new WaitUntil(() => _characters.Count >= result.Characters.Count);
+
+        _dataFlag.succeedGetCharacter = true;
+        _signalBus.TryFire(new FinishLoading());
+        _signalBus.TryFire(new RefreshCharacterListSignal(_characters));
     }
 
     void OnError(PlayFabError error)
     {
         _signalBus.TryFire(new ErrorSignal(error.ErrorMessage));
+    }
+
+    void OnCreateCharacterSucceed()
+    {
+        CallCharacters();
+        _signalBus.TryFire(new CharacterCreatedSignal());
     }
 
     public void OnCharacterSelectSignalFired(CharacterSelectSignal signal)
@@ -137,10 +169,10 @@ public class CharacterServiceController : MonoBehaviour
         }
     }
 
-    public void OnCharacterCreateSignalFired(CharacterCreateSignal signal)
+    public void OnCreateCharacterSignalFired(CreateCharacterSignal signal)
     {
         string jsonClass = PlayfabCharacter.SetupData(_newCharacter.classData);
         string jsonRace = PlayfabCharacter.SetupData(_newCharacter.race);
-        PlayfabCharacter.CreateCharacter(_newCharacter.name, jsonRace, jsonClass, OnError);
+        PlayfabCharacter.CreateCharacter(_newCharacter.name, jsonRace, jsonClass, OnCreateCharacterSucceed, OnError);
     }
 }

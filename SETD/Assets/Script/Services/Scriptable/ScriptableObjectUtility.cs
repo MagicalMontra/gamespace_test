@@ -4,6 +4,7 @@ using System.IO;
 
 namespace Utility.Scriptable
 {
+#if UNITY_EDITOR
     public static class ScriptableObjectUtility
     {
         /// <summary>
@@ -67,4 +68,6 @@ namespace Utility.Scriptable
             AssetDatabase.Refresh();
         }
     }
+#endif
+
 }

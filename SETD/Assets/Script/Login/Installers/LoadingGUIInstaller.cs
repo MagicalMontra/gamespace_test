@@ -10,6 +10,6 @@ public class LoadingGUIInstaller : MonoInstaller<LoadingGUIInstaller>
 
     public override void InstallBindings()
     {
-        Container.Bind<GUILoadingScreen.Settings>().FromInstance(settings);
+        Container.Bind<GUILoadingScreen.Settings>().FromInstance(settings).AsTransient();
     }
 }

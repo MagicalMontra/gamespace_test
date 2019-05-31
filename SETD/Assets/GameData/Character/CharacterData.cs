@@ -7,44 +7,44 @@ using UnityEngine;
 public class CharacterData
 {
     public List<Modifier> modifiers = new List<Modifier>();
-    public Race race { get; private set; }
-    public ClassData classData { get; private set; }
-    public string name { get; private set; }
-    public int maxHitPoints { get; private set; }
-    public int maxMana { get; private set; }
-    public int maxStamina { get; private set; }
+    public Race race;
+    public ClassData classData;
+    public string name;
+    int _maxHitPoints;
+    int _maxMana;
+    int _maxStamina;
+    float _hitPoints;
+    float _manaPoints;
+    float _staminaPoints;
 
-    public float hitPoints { get; private set; }
-    public float manaPoints { get; private set; }
-    public float staminaPoints { get; private set; }
 
     public void InitResources()
     {
-        hitPoints = maxHitPoints;
+        _hitPoints = _maxHitPoints;
 
         // Some character may not have mana
-        if (maxMana > 0)
-            manaPoints = maxMana;
+        if (_maxMana > 0)
+            _manaPoints = _maxMana;
 
-        staminaPoints = maxStamina;
+        _staminaPoints = _maxStamina;
     }
 
     public float HitPointsChange(float changeAmount)
     {
-        var calculatedValue = ResourceChange(hitPoints, changeAmount, maxHitPoints);
-        return hitPoints = calculatedValue;
+        var calculatedValue = ResourceChange(_hitPoints, changeAmount, _maxHitPoints);
+        return _hitPoints = calculatedValue;
     }
 
     public float ManaPointsChange(float changeAmount)
     {
-        var calculatedValue = ResourceChange(manaPoints, changeAmount, maxMana);
-        return manaPoints = calculatedValue;
+        var calculatedValue = ResourceChange(_manaPoints, changeAmount, _maxMana);
+        return _manaPoints = calculatedValue;
     }
 
     public float StaminaChange(float changeAmount)
     {
-        var calculatedValue = ResourceChange(manaPoints, changeAmount, maxStamina);
-        return staminaPoints = calculatedValue;
+        var calculatedValue = ResourceChange(_manaPoints, changeAmount, _maxStamina);
+        return _staminaPoints = calculatedValue;
     }
 
     protected float ResourceChange(float targetResource, float changedAmount, int resourceLimits)

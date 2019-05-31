@@ -7,13 +7,14 @@ using PlayFab;
 using PlayFab.Json;
 using PlayFab.ClientModels;
 using Newtonsoft.Json;
+using DG.Tweening;
 
 
 namespace PlayfabServices.User
 {
     public static class PlayfabCharacter
     {
-        public static void GetCharacterDatas(Action<List<CharacterData>> dataCallback, Action<PlayFabError> errorSignal)
+        public static void GetCharacterDatas(Action<ListUsersCharactersResult> dataCallback, Action<PlayFabError> errorSignal)
         {
             var listCharactersRequest = new ListUsersCharactersRequest
             {
@@ -25,24 +26,54 @@ namespace PlayfabServices.User
             error => OnError(error, errorSignal));
         }
 
-        static void OnGetCharacterData(ListUsersCharactersResult result, Action<List<CharacterData>> dataCallback)
+        public static void GetCharacterDeepData(string id, string name, Action<CharacterData> dataCallback, Action<PlayFabError> errorSignal)
         {
-            if (result.Characters.Count <= 0)
+            var characterDataRequest = new GetCharacterDataRequest
             {
-                dataCallback(new List<CharacterData>());
-                return;
-            }
+                CharacterId = id,
+                Keys = new List<string> { "Race", "ClassData" }
+            };
 
+            PlayFabClientAPI.GetCharacterData(characterDataRequest, result =>
+            {
+                CharacterData data = new CharacterData();
+                UserDataRecord race = new UserDataRecord();
+                UserDataRecord classData = new UserDataRecord();
+                result.Data.TryGetValue("Race", out race);
+                result.Data.TryGetValue("ClassData", out classData);
+
+                data.name = name;
+                data.race = JsonConvert.DeserializeObject<Race>(race.Value);
+                data.classData = JsonConvert.DeserializeObject<ClassData>(classData.Value);
+
+                dataCallback(data);
+            }, error => OnError(error, errorSignal));
         }
 
-        public static void CreateCharacter(string newName, string newClass, string newRace, Action<PlayFabError> errorSignal)
+        static void OnGetCharacterData(ListUsersCharactersResult result,
+        Action<ListUsersCharactersResult> dataCallback)
+        {
+            dataCallback(result);
+        }
+
+        public static void CreateCharacter(string newName, string newClass, string newRace, Action characterCreated, Action<PlayFabError> errorSignal)
         {
             PlayFabClientAPI.ExecuteCloudScript(new ExecuteCloudScriptRequest()
             {
                 FunctionName = "createCharacter",
                 FunctionParameter = new { characterName = newName },
                 GeneratePlayStreamEvent = true
-            }, result => OnCharacterInitialized(result, newRace, newClass), error => OnError(error, errorSignal));
+            }, result => OnCharacterInitialized(result, newRace, newClass, characterCreated), error => OnError(error, errorSignal));
+        }
+
+        public static void DeleteCharacter(string charName, Action onDelete, Action<PlayFabError> errorSignal)
+        {
+            PlayFabClientAPI.ExecuteCloudScript(new ExecuteCloudScriptRequest()
+            {
+                FunctionName = "removeCharacter",
+                FunctionParameter = new { charToDelete = charName },
+                GeneratePlayStreamEvent = true
+            }, result => onDelete(), error => OnError(error, errorSignal));
         }
 
         public static string SetupData<T>(T dataToUpload)
@@ -83,7 +114,7 @@ namespace PlayfabServices.User
             dataCallback(list);
         }
 
-        static void InitializeCharacterBaseData(string characterId, string newClass, string newRace)
+        static void InitializeCharacterBaseData(string characterId, string newClass, string newRace, Action characterCreated)
         {
             var newCharacterData = new Dictionary<string, string>();
             newCharacterData.Add("Race", newRace);
@@ -95,22 +126,25 @@ namespace PlayfabServices.User
                 Data = newCharacterData,
                 Permission = UserDataPermission.Public
             };
-            PlayFabClientAPI.UpdateCharacterData(initCharacterRequest, OnCharacterCreated, error => Debug.Log(error.ErrorMessage));
+
+            PlayFabClientAPI.UpdateCharacterData(initCharacterRequest, result => OnCharacterCreated(result, characterCreated),
+            error => Debug.Log(error.ErrorMessage));
         }
 
-        static void OnCharacterCreated(UpdateCharacterDataResult result)
+        static void OnCharacterCreated(UpdateCharacterDataResult result, Action signal)
         {
             // Signal UI Change
+            signal();
         }
 
-        static void OnCharacterInitialized(ExecuteCloudScriptResult result, string race, string classData)
+        static void OnCharacterInitialized(ExecuteCloudScriptResult result, string race, string classData, Action characterCreated)
         {
             JsonObject jsonResult = (JsonObject)result.FunctionResult;
             object message = null;
             jsonResult.TryGetValue("CharacterId", out message);
             var characterResult = JsonUtility.FromJson<GrantCharacterToUserResult>(message.ToString());
 
-            InitializeCharacterBaseData(characterResult.CharacterId, classData, race);
+            InitializeCharacterBaseData(characterResult.CharacterId, classData, race, characterCreated);
         }
 
         static void OnError(PlayFabError error, Action<PlayFabError> signal)

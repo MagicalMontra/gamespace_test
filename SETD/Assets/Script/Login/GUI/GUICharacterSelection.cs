@@ -15,14 +15,16 @@ public class GUICharacterSelection : MonoBehaviour
         public Button[] createButtons;
         public GUICharacterCreate createPanel;
         public GUILoadingScreen dataLoading;
+        public GUICharacterSlot[] cSlots;
     }
     Settings _settings;
     CharacterServiceController _controller;
 
     [Inject]
-    public void Constructor(Settings settings)
+    public void Constructor(Settings settings, CharacterServiceController controller)
     {
         _settings = settings;
+        _controller = controller;
     }
 
     void OnCreateButtonClicked()
@@ -58,9 +60,22 @@ public class GUICharacterSelection : MonoBehaviour
         _settings.createPanel.SetupClass();
     }
 
-    IEnumerator DelayResolver()
+    public void OnRefreshedCharacterFired(RefreshCharacterListSignal signal)
     {
-        yield return new WaitForSecondsRealtime(0.5f);
+        for (int i = 0; i < _settings.cSlots.Length; i++)
+        {
+            if (i >= signal._characters.Count)
+                _settings.cSlots[i].RemoveSlot();
+            else
+            {
+                _settings.cSlots[i].SetupSlot(signal._characters[i]);
+                _settings.cSlots[i].SetRemoveButton(_controller);
+            }
+        }
+    }
 
+    public void OnCharacterCreatedSignalFired(CharacterCreatedSignal signal)
+    {
+        _settings.createPanel.OnCharacterCreated();
     }
 }

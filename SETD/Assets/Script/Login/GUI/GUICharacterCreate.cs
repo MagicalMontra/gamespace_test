@@ -25,6 +25,13 @@ public class GUICharacterCreate : MonoBehaviour
 
     void AssignInputFunction()
     {
+        // _setting.sumButton.onClick.RemoveAllListeners();
+        // _setting.cancelButton.onClick.RemoveAllListeners();
+        // _setting.createButton.onClick.RemoveAllListeners();
+        // _setting.nameInput.onValueChanged.RemoveAllListeners();
+        // _setting.raceInput.onValueChanged.RemoveAllListeners();
+        // _setting.classInput.onValueChanged.RemoveAllListeners();
+
         _setting.cancelButton.onClick.AddListener(() => gameObject.SetActive(false));
         _setting.sumButton.onClick.AddListener(() => OnSummaryOpened());
         _setting.createButton.onClick.AddListener(() => OnCreateButtonClicked());
@@ -88,8 +95,17 @@ public class GUICharacterCreate : MonoBehaviour
 
     void OnCreateButtonClicked()
     {
-        _signalBus.TryFire(new CharacterCreateSignal());
+        _setting.createButton.interactable = false;
+        _setting.loadingScreen.StartLoading();
+        _signalBus.TryFire(new CreateCharacterSignal());
     }
+
+    public void OnCharacterCreated()
+    {
+        _setting.loadingScreen.EndLoading();
+        gameObject.SetActive(false);
+    }
+
 
     [Serializable]
     public class Settings
@@ -109,5 +125,6 @@ public class GUICharacterCreate : MonoBehaviour
         public GameObject createPanel;
         public GameObject sumPanel;
         public GameObject modPrefab;
+        public GUILoadingScreen loadingScreen;
     }
 }

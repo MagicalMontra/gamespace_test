@@ -13,6 +13,7 @@ public class TextLoadingAnimation : MonoBehaviour
 
     public void StartTextSequence()
     {
+        StopTextSequence();
         _tmComponent = GetComponentInChildren<TextMeshProUGUI>(true);
         _originalText = _tmComponent.text;
         TextSequence(dotCount);
