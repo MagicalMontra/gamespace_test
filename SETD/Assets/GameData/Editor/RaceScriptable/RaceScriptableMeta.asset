@@ -43,3 +43,13 @@ MonoBehaviour:
       targetStat: 3
       modType: 1
     abilities: []
+  - name: Halfling
+    id: 3
+    modifiers:
+    - modName: The Hobbit
+      id: 6
+      modDesc: Add 50 Stamina
+      modAmount: 50
+      targetStat: 2
+      modType: 1
+    abilities: []

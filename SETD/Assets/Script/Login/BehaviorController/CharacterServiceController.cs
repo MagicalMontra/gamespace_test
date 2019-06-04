@@ -173,6 +173,6 @@ public class CharacterServiceController : MonoBehaviour
     {
         string jsonClass = PlayfabCharacter.SetupData(_newCharacter.classData);
         string jsonRace = PlayfabCharacter.SetupData(_newCharacter.race);
-        PlayfabCharacter.CreateCharacter(_newCharacter.name, jsonRace, jsonClass, OnCreateCharacterSucceed, OnError);
+        PlayfabCharacter.CreateCharacter(_newCharacter.name, jsonClass, jsonRace, OnCreateCharacterSucceed, OnError);
     }
 }
